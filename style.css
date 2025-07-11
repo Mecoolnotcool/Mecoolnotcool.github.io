@@ -1,0 +1,19 @@
+button {
+  width: 120px; /* fixed size */
+  padding: 10px;
+  font-size: clamp(10px, 1.5vw, 14px); /* adjusts based on viewport */
+  white-space: normal; /* allow wrapping */
+  word-break: break-word; /* break long words if needed */
+}
+body {
+    background-color: gray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+    text-align: center;
+}
+.cashText {
+    font-size: 20px;
+    color: white;
+    margin-top: 20px;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title></title>
+</head>
+<body>
+    <canvas id="Canvas" width="600" height="600" style="border:1px solid #000000;"></canvas>
+    <div id="cashText" class="cashText"></div>
+
+    <div class="Buttons"> 
+        <button onclick="generateMap()">Generate Map</button>
+        <button onclick="saveData()">Save Data</button>
+        <button onclick="loadData(null)">Load Data</button>
+        <button onclick="setCutstomSeed()">Set Seed</button>
+        <button onclick="DownloadData()">Download Game Save</button>
+        <button onclick="saveData(); window.location.href='tips.html';">Tips</button>
+    <div id="buttons"></div>
+
+    <div class="Shop"> 
+        
+    <div id="Shop"></div>
+     <input accept=".json" type="file" id="DataLoader"> 
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="perlin.js"></script>
+    <script src="javascript.js"></script>
+
+</body>
+</html>
