@@ -1,4 +1,3 @@
-
 const GameVersion = 'Alpha 0.1'
 
 //canvas stuff
@@ -339,7 +338,7 @@ for (const name of TilesWithImages) {
         Images[name] = img;
 }
 
-
+//functions
 function preloadImages(names, onComplete) {
     let loaded = 0;
     const total = names.length;
@@ -367,7 +366,6 @@ function preloadImages(names, onComplete) {
     }
 }
 
-//functions
 function drawTile(x,y,type,degrees){
     if(typeof x !== 'number' || typeof y !== 'number' || typeof Tile_Size !== 'number') {
         console.log('failed to draw a tile, number values not provided')
@@ -571,7 +569,6 @@ function doTransfer(dest,source,Amount) {
 }
 
 function transferInventorys(Ax,Ay,Bx,By, Amount){
-    //if both tiles exist then move on
     if(tileExists(Ax,Ay)&& tileExists(Bx,By)){
         let Destination = getTile(Bx,By)
         let Inputer = getTile(Ax,Ay)
@@ -584,7 +581,6 @@ function transferInventorys(Ax,Ay,Bx,By, Amount){
             SpecificType = containers[Destination.machine].TypeInputed ?? false;
         }
 
-        //if there is no input then cancel the function
         if(Destination.input == null) return;
         if(Inputer.output == null) return;
         checkIfTransfer(Amount,Destination,Inputer,inventory2State, SpecificType)
