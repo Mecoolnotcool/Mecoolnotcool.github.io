@@ -17,7 +17,7 @@ let Tile_Size = originalTileSize*zoom;
 //amount of tiles is cols*rows or just x^2 x being either cols or rows bc it is a square
 let cols = 75;
 let rows = cols;
-let MovementSpeed = 50;
+let MovementSpeed = 100;
 
 let Tiles = [];
 
@@ -455,10 +455,11 @@ function Init(){
 }
 
 
-
 let camera = {
   x: 0,
-  y: 0  ,
+  y: 0,
+  ox:0,
+  oy:0,
   width: canvas.width,
   height: canvas.height,
 };
@@ -623,11 +624,20 @@ function checkIfTransfer(Amount, Destination, Inputer, AltInventory, specific){
    
 }
 
+function moveCamera(x,y){
+    camera.ox += x
+    camera.oy += y
+
+    camera.x = camera.ox*zoom
+    camera.y = camera.oy*zoom
+}
+
 let maxBorderV = 1500 * zoom
 let maxBorderH = 1500 * zoom
 function fixCameraPos(z = zoom) {
      maxBorderV = 1500 * z
      maxBorderH = 1500 * z
+     console.log(CanvasWidth)
      return
 }
 
@@ -646,23 +656,25 @@ document.addEventListener('keydown', function(event) {
                 }
         }
         if(event.key === 'w' && camera.y> 0) {
-            camera.y -= MovementSpeed
+            moveCamera(0,-MovementSpeed)
         } else if(event.key === 's' && camera.y < maxBorderH )  {
-            camera.y += MovementSpeed
+             moveCamera(0,MovementSpeed)
         }   
         if(event.key === 'd' && camera.x < maxBorderV) {
-            camera.x += MovementSpeed
+             moveCamera(MovementSpeed,0)
         } else if(event.key === 'a' && camera.x > 0) {
-            camera.x -= MovementSpeed
+            moveCamera(-MovementSpeed,0)
          }
 
          if(event.key === 'o' && zoom > 0.5){
             zoom-=0.1
             Tile_Size = originalTileSize*zoom;
+            moveCamera(0,0)
             fixCameraPos(zoom)
          } else if(event.key === 'p' && zoom < 1 && zoom != 0.4) {
             zoom +=0.1
             Tile_Size = originalTileSize*zoom;
+            moveCamera(0,0)
             fixCameraPos(zoom)
          }
 });
@@ -671,14 +683,14 @@ document.addEventListener('keydown', function(event) {
 let HoveredTileX = null
 let HoveredTileY = null
 canvas.addEventListener('mousemove',function(event) {
-    let rect = canvas.getBoundingClientRect() //This has to be done bc sometimes the canvas is in the middle other times not so we adjust it
+    let rect = canvas.getBoundingClientRect() 
     let mouseX = event.clientX - rect.left;
     let mouseY = event.clientY - rect.top;
 
     let tileX = Math.floor(mouseX/Tile_Size) 
     let tileY = Math.floor(mouseY/Tile_Size) 
     
-    if (tileX >= 0 && tileX < CanvasWidth / Tile_Size &&tileY >= 0 && tileY < CanvasHeight / Tile_Size) {
+    if (tileX >= 0 &&  tileX < 2000/ Tile_Size &&tileY >= 0 && tileY < 2000 / Tile_Size) {
        HoveredTileX = tileX
        HoveredTileY = tileY
     } 
@@ -686,16 +698,21 @@ canvas.addEventListener('mousemove',function(event) {
 
 //detects clicking on tile
 canvas.addEventListener('mousedown', function(event) {
-    const rect = canvas.getBoundingClientRect() //This has to be done bc sometimes the canvas is in the middle other times not so we adjust it
+    const rect = canvas.getBoundingClientRect() 
     const mouseX = event.clientX - rect.left
     const mouseY = event.clientY - rect.top
 
-    let CameraTileX = Math.floor(camera.x / Tile_Size); 
+    //Offest because of camera position
+    let CameraTileX = Math.floor(camera.x / Tile_Size)
     let CameraTileY = Math.floor(camera.y / Tile_Size)
+
+    console.log(CameraTileX/2,CameraTileX*zoom,CameraTileX,camera.x)
     
-    
-    const tileX = Math.floor((mouseX / Tile_Size) + CameraTileX); //Calculate the tile position based on the mouse position and camera offset
-    const tileY = Math.floor((mouseY /Tile_Size) + CameraTileY); //Calculate the tile position based on the mouse position and camera offset
+    let tileX = HoveredTileX + CameraTileX 
+    let tileY = HoveredTileY + CameraTileY
+
+    // const tileX = Math.floor((mouseX / Tile_Size) + CameraTileX);
+    // const tileY = Math.floor((mouseY /Tile_Size) + CameraTileY);
 
     if (tileExists(tileX, tileY)) {
         if(ItemSelected != null){
@@ -1052,11 +1069,13 @@ function shop(){
     });
 }
 
-//cool function to find the best seed for grass, sand and water and more in the future
-//Does take a while to run so be patient
-//This is not used in the game but can be used to find the best seed for a specific type of tile
-//Checks through 2^16 seeds which is 65536 seeds and at the moment it is the maximum seed value
-//It will log the best seed for grass, sand and water
+/*
+cool function to find the best seed for grass, sand and water and more in the future
+Does take a while to run so be patient
+This is not used in the game but can be used to find the best seed for a specific type of tile
+Checks through 2^16 seeds which is 65536 seeds and at the moment it is the maximum seed value
+It will log the best seed for grass, sand and water
+*/
 function searchForBestSeed(maxSeed = 66536) {
     let bestSeedGrass = 0;
     let bestSeedSand = 0;
@@ -1123,10 +1142,13 @@ function countTiles(seed){
         return ;
 }
 
-
+/*Notes
+    Might Be fixed
+*/
 function resizeCanvas(w,h){
-  if (window.innerHeight > maxCanvasHeight) h = maxCanvasHeight; else h = window.innerHeight;
-  if (window.innerWidth > maxCanvasWidth) w = maxCanvasWidth; else w = window.innerWidth;
+    alert("Warning this feature is experimental and may break the game")
+    if (window.innerHeight > maxCanvasHeight) h = maxCanvasHeight; else h = window.innerHeight;
+    if (window.innerWidth > maxCanvasWidth) w = maxCanvasWidth; else w = window.innerWidth;
 
     CanvasHeight = h
     CanvasWidth = w
@@ -1155,3 +1177,5 @@ console.log('Feel free to report any bugs or suggest new features')
 console.log('https://github.com/Mecoolnotcool/factory/issues')
 console.log('New website. May not be up to date. https://mecoolnotcool.github.io./')
 console.log('---------------------------------------------------')
+
+
